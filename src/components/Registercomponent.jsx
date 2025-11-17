@@ -14,7 +14,10 @@ const Registercomponent = () => {
   const [loading, setLoading] = useState("");
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
-
+  
+  //  below is the redirecting timer
+  const [countdown, setCountdown] = useState(6);
+  // Declare the navigate hook such that if a person successfully register, he can be redirected to login page
   const navigate = useNavigate();
 
   // Replace with your API URL
@@ -30,17 +33,32 @@ const Registercomponent = () => {
 
       const res = await axios.post(url, data);
 
+      console.log("Registration Success:", res.data)
+
       setLoading("");
-      setSuccess(res.data.message || "Registration Successful!");
+      setSuccess(res.data.message);
       alert("Welcome to Spidex Online Market!");
-      navigate("/login");
+
+      // Delay navigation for 6 seconds
+      // Auto redirect after 6 seconds
+      let counter = 6;
+      const interval = setInterval(() => {
+        counter--;
+        setCountdown(counter);
+        if (counter === 0) {
+          clearInterval(interval);
+          navigate("/login");
+        }
+      }, 1000);;
 
       // Reset form
       setName("");
       setEmail("");
       setPassword("");
       setRole("buyer");
-    } catch (err) {
+
+    } 
+    catch (err) {
       setLoading("");
       setError(
         err.response?.data?.message ||

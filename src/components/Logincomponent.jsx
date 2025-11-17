@@ -1,51 +1,69 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import MyNavbar from "./MyNavbar";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import MyFooter from "./MyFooter";
+import { AuthContext } from "../context/AuthContext";
 
 const LoginComponent = () => {
   // state hooks
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState("");
   const [success, setSuccess] = useState("");
-  const [error, setError] = useState("");
-
+  
+// hooks
   const navigate = useNavigate();
+  const { setToken, setUser } = useContext(AuthContext);
 
-  // backend URL (adjust port if needed)
-  const url = "http://127.0.0.1:5000/api/user/login";
+  // backend URL 
+  const url = "https://spidexmarket.onrender.com/api/user/login";
 
   // handle form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
     setLoading("Logging you into Spidex Market...");
 
     try {
       const data = { email, password };
       const res = await axios.post(url, data);
 
+      const { token, user } = res.data;
+
       setLoading("");
       setSuccess(res.data.message || "Login successful!");
 
       // save token to local storage for authentication
-      localStorage.setItem("spidexToken", res.data.token);
-      localStorage.setItem("user", JSON.stringify(res.data.user));
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
 
-      alert("Welcome back to Spidex Online Market!");
-      navigate("/"); // redirect to home after login
-
-      // clear fields
-      setEmail("");
-      setPassword("");
-    } catch (err) {
+      setToken(token);
+      setUser(user);
       setLoading("");
-      setError(
-        err.response?.data?.message ||
-          "Invalid email or password. Please try again."
-      );
+
+       // ✅ Redirect by role
+      if (user.role === "admin") {
+        navigate("/admin-dashboard");
+      } else if (user.role === "seller") {
+        if (!user.isApprovedSeller) {
+          alert("Your seller account is pending approval. You can browse but cannot post yet.");
+          navigate("/");
+        } else {
+          navigate("/seller-dashboard");
+        }
+      } else {
+        navigate("/");
+      }
+    } catch (err) {
+      console.error("Login error:", err.response || err);
+      setLoading("");
+      if (err.response && err.response.status === 401) {
+        setError(err.response.data.message);
+      } else {
+        setError("Network or server error");
+      }
     }
   };
 
