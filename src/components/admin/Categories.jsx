@@ -47,7 +47,7 @@ const Categories = () => {
     if (photo) formData.append("photo", photo);
 
     try {
-      const res = await axios.post(`${url}/create`, formData, {
+      const res = await axios.post(`${url}/add`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
