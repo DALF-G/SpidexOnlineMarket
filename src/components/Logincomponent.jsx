@@ -100,6 +100,7 @@ const LoginComponent = () => {
                 onChange={(e) => setEmail(e.target.value)}
               />
 
+
               {/* Password */}
               <input
                 type="password"

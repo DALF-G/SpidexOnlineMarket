@@ -18,6 +18,10 @@ import Sellers from './components/admin/Sellers'
 import Products from './components/admin/Products'
 import Messages from './components/admin/Messages'
 import ProductAdd from './components/admin/forms/ProductAdd'
+import SellerLayout from './components/seller/SellerLayout'
+import SellerDashboard from './components/seller/SellerDashboard';
+import Users from './components/admin/Users';
+import Categories from './components/admin/Categories';
 
 
 function App() {
@@ -36,11 +40,24 @@ function App() {
        }
        >
         <Route path='' element={<AdminDashboard/>} />
+        <Route path='users' element={<Users/>} />
+        <Route path='categories' element={<Categories/>} />
         <Route path='buyers' element={<Buyers/>} />
         <Route path='sellers' element={<Sellers/>} />
         <Route path='products' element={<Products/>} />
         <Route path='messages' element={<Messages/>} />
         <Route path='product/add' element={<ProductAdd/>} />
+       </Route>
+
+       {/* Below are the seller routes */}
+       <Route path='/seller-dashboard'
+       element={
+        <ProtectedRoute allowedRoles={['seller']}>
+          <SellerLayout/>
+        </ProtectedRoute>
+       }
+       >
+        <Route path='' element={<SellerDashboard/>} />
        </Route>
 
       <Route path='/register' element={<Registercomponent/>} />

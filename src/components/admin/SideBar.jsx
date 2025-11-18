@@ -21,7 +21,7 @@ const SideBar = () => {
         {/* Dashboard */}
         <li className="nav-item">
           <NavLink
-            to="/admin"
+            to="/admin-dashboard"
             end
             className={({ isActive }) =>
               isActive
@@ -36,7 +36,7 @@ const SideBar = () => {
         {/* Users */}
         <li>
           <NavLink
-            to="/admin/users"
+            to="/admin-dashboard/users"
             className={({ isActive }) =>
               isActive
                 ? "nav-link bg-warning text-dark fw-bold"
@@ -50,7 +50,7 @@ const SideBar = () => {
         {/* Seller Approval */}
         <li>
           <NavLink
-            to="/admin/sellers"
+            to="/admin-dashboard/sellers"
             className={({ isActive }) =>
               isActive
                 ? "nav-link bg-warning text-dark fw-bold"
@@ -64,7 +64,7 @@ const SideBar = () => {
         {/* Categories */}
         <li>
           <NavLink
-            to="/admin/categories"
+            to="/admin-dashboard/categories"
             className={({ isActive }) =>
               isActive
                 ? "nav-link bg-warning text-dark fw-bold"
@@ -78,7 +78,7 @@ const SideBar = () => {
         {/* Products */}
         <li>
           <NavLink
-            to="/admin/products"
+            to="/admin-dashboard/products"
             className={({ isActive }) =>
               isActive
                 ? "nav-link bg-warning text-dark fw-bold"
@@ -89,31 +89,31 @@ const SideBar = () => {
           </NavLink>
         </li>
 
-        {/* Orders */}
+        {/* Messages */}
         <li>
           <NavLink
-            to="/admin/orders"
+            to="/admin-dashboard/messages"
             className={({ isActive }) =>
               isActive
                 ? "nav-link bg-warning text-dark fw-bold"
                 : "nav-link text-white"
             }
           >
-            <i className="bi bi-cart-check me-2"></i> Orders
+            <i class="bi bi-chat-dots"></i> Messages
           </NavLink>
         </li>
 
-        {/* Reports */}
+        {/* Buyers */}
         <li>
           <NavLink
-            to="/admin/reports"
+            to="/admin-dashboard/buyers"
             className={({ isActive }) =>
               isActive
                 ? "nav-link bg-warning text-dark fw-bold"
                 : "nav-link text-white"
             }
           >
-            <i className="bi bi-bar-chart-line-fill me-2"></i> Reports
+            <i class="bi bi-people"></i> Buyers
           </NavLink>
         </li>
       </ul>

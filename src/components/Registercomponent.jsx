@@ -9,6 +9,7 @@ const Registercomponent = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [phone, setPhone] = useState("");
   const [role, setRole] = useState("buyer"); // default role
 
   const [loading, setLoading] = useState("");
@@ -21,7 +22,7 @@ const Registercomponent = () => {
   const navigate = useNavigate();
 
   // Replace with your API URL
-  const url = "http://127.0.0.1:3000/api/user/register";
+  const url = "https://spidexmarket.onrender.com/api/user/register";
 
   // Submit handler
   const handleSubmit = async (e) => {
@@ -29,7 +30,7 @@ const Registercomponent = () => {
     setLoading("Creating your Spidex Market account... please wait...");
 
     try {
-      const data = { name, email, password, role };
+      const data = { name, email,phone, password, role };
 
       const res = await axios.post(url, data);
 
@@ -54,6 +55,7 @@ const Registercomponent = () => {
       // Reset form
       setName("");
       setEmail("");
+      setPhone("");
       setPassword("");
       setRole("buyer");
 
@@ -117,6 +119,17 @@ const Registercomponent = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
+
+             {/* phone */}
+             <input
+               type="tel"
+               placeholder="Phone Number"
+               className="form-control mb-3"
+               required
+               value={phone}
+               onChange={(e) => setPhone(e.target.value)}
+              />
+
 
               {/* Role */}
               <select

@@ -8,6 +8,7 @@ const AdminRegistercomponent = () => {
   // State Hooks
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [secretkey, setSecretkey] = useState("");
 
@@ -30,7 +31,7 @@ const AdminRegistercomponent = () => {
 
     try {
       // Admin ALWAYS has role "admin"
-      const data = { name, email, password, role: "admin", secretkey };
+      const data = { name, email, password,phone, role: "admin", secretkey };
 
       const res = await axios.post(url, data);
 
@@ -53,6 +54,7 @@ const AdminRegistercomponent = () => {
       // Clear values
       setName("");
       setEmail("");
+      setPhone("");
       setPassword("");
       setSecretkey("");
 
@@ -121,6 +123,16 @@ value={password}
 onChange={(e) => {setPassword(e.target.value)}}
  />
  {/* {password} */}
+
+            {/* phone */}
+             <input
+               type="tel"
+               placeholder="Phone Number"
+               className="form-control mb-3"
+               required
+               value={phone}
+               onChange={(e) => setPhone(e.target.value)}
+              />
 
  <input type="password" 
  placeholder='Enter Your Admin secretkey Here'
