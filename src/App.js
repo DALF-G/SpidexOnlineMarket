@@ -22,6 +22,10 @@ import SellerLayout from './components/seller/SellerLayout'
 import SellerDashboard from './components/seller/SellerDashboard';
 import Users from './components/admin/Users';
 import Categories from './components/admin/Categories';
+import CategoryAdd from './components/admin/forms/CategoryAdd';
+import CategoryEdit from './components/admin/forms/CategoryEdit';
+import ProductView from './components/admin/forms/ProductView';
+import ProductEdit from './components/admin/forms/ProductEdit';
 
 
 function App() {
@@ -42,11 +46,15 @@ function App() {
         <Route path='' element={<AdminDashboard/>} />
         <Route path='users' element={<Users/>} />
         <Route path='categories' element={<Categories/>} />
+        <Route path='categories/add' element={<CategoryAdd />} />
+        <Route path='categories/edit' element={<CategoryEdit />} />
         <Route path='buyers' element={<Buyers/>} />
         <Route path='sellers' element={<Sellers/>} />
         <Route path='products' element={<Products/>} />
+        <Route path='products/add' element={<ProductAdd/>} />
+        <Route path='products/view' element={<ProductView/>} />
+        <Route path='products/edit' element={<ProductEdit/>} />
         <Route path='messages' element={<Messages/>} />
-        <Route path='product/add' element={<ProductAdd/>} />
        </Route>
 
        {/* Below are the seller routes */}

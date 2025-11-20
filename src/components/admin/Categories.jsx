@@ -1,193 +1,150 @@
 import React, { useContext, useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { toast, ToastContainer } from "react-toastify";
 import { AuthContext } from "../../context/AuthContext";
 
 const Categories = () => {
   const { token } = useContext(AuthContext);
-
-  const [name, setName] = useState("");
-  const [subcategories, setSubcategories] = useState("");
-  const [photo, setPhoto] = useState(null);
-
   const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
   const url = "https://spidexmarket.onrender.com/api/category";
 
   // Fetch categories
   const fetchCategories = async () => {
     try {
+      toast.info("Loading categories...");
       const res = await axios.get(`${url}/`);
       setCategories(res.data.categories);
-      setLoading(false);
-    } 
-    catch (err) {
-      console.error("Fetch Error:", err);
-      setLoading(false);
-    }
-  };
-
-  // Handle create category
-  const handleCreateCategory = async (e) => {
-    e.preventDefault();
-
-    if (!name) {
-      setMessage("Category name is required.");
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append("name", name);
-
-    if (subcategories.trim()) {
-      formData.append("subcategories", subcategories); // comma-separated
-    }
-
-    if (photo) formData.append("photo", photo);
-
-    try {
-      const res = await axios.post(`${url}/add`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
-
-      setMessage(res.data.message);
-      setName("");
-      setSubcategories("");
-      setPhoto(null);
-      fetchCategories();
+      toast.dismiss();
     } catch (err) {
-      console.error("Create Error:", err.response || err);
-      setMessage(err.response?.data?.message || "Error creating category");
+      toast.dismiss();
+      toast.error("Failed to load categories");
+      console.error(err);
     }
   };
 
-  // Delete category
-  const deleteCategory = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this category?")) return;
-
-    try {
-      await axios.delete(`${url}/delete/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      fetchCategories();
-      alert("Category deleted successfully");
-    } catch (err) {
-      console.error("Delete Error:", err);
-      alert("Failed to delete category");
-    }
-  };
-
-    useEffect(() => {
+  useEffect(() => {
     fetchCategories();
   }, []);
 
+  // Delete category
+  const handleDelete = async (id) => {
+    if (!window.confirm("Do you want to delete this category?")) return;
+
+    try {
+      toast.warning("Deleting category...");
+      await axios.delete(`${url}/delete/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      fetchCategories();
+      toast.success("Category deleted successfully");
+    } 
+    catch (err) {
+      toast.dismiss();
+      toast.error("Failed to delete category");
+      console.error(err);
+    }
+  };
+
+  // Edit category
+  const handleEdit = (category) => {
+    navigate("/admin-dashboard/categories/edit", { state: { category } });
+  };
+
   return (
-    <div className="container mt-4 mb-5">
+    <div className="container mt-2">
+      <ToastContainer position="top-right" autoClose={3000} />
 
-      <h3 className="text-warning">Manage Categories</h3>
-      <hr />
+      {/* Breadcrumb */}
+      <nav aria-label="breadcrumb">
+        <ol className="breadcrumb">
+          <li className="breadcrumb-item">
+            <Link to={"/admin-dashboard"}>Dashboard</Link>
+          </li>
+          <li className="breadcrumb-item active" aria-current="page">
+            Categories
+          </li>
+        </ol>
+      </nav>
 
-      {message && <div className="alert alert-info">{message}</div>}
+      {/* Card */}
+      <div className="card shadow p-4">
+        <div className="d-flex justify-content-between align-items-center mb-3">
+          <h5 className="text-success mb-0">
+            <i className="bi bi-list-ul"></i> Categories List
+          </h5>
 
-      {/* CREATE CATEGORY FORM */}
-      <form
-        onSubmit={handleCreateCategory}
-        className="card shadow p-4 mb-4 border-0 rounded"
-      >
-        <h5 className="text-success mb-3">Add New Category</h5>
+          {/* Add button */}
+          <button
+            className="btn btn-success"
+            onClick={() =>
+              navigate("/admin-dashboard/categories/add")
+            } >
+            <i className="bi bi-plus-circle"></i> Add Category
+          </button>
+        </div>
 
-        <input
-          type="text"
-          placeholder="Category Name"
-          className="form-control mb-3"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-        />
+        {/* Table */}
+        <div className="table-responsive">
+          {categories.length === 0 ? (
+            <div className="alert alert-warning text-center mb-0">
+              <h5>
+                <i className="bi bi-patch-exclamation-fill"></i> No Categories
+                Found
+              </h5>
+            </div>
+          ) : (
+            <table className="table table-striped table-hover table-bordered">
+              <thead className="table-success">
+                <tr>
+                  <th>#</th>
+                  <th>Image</th>
+                  <th>Name</th>
+                  <th>Subcategories</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
 
-        <input
-          type="text"
-          placeholder="Enter subcategories separated by commas"
-          className="form-control mb-3"
-          value={subcategories}
-          onChange={(e) => setSubcategories(e.target.value)}
-        />
+              <tbody>
+                {categories.map((cat, index) => (
+                  <tr key={cat._id}>
+                    <td>{index + 1}</td>
+                    <td style={{ width: "120px" }}>
+                      {cat.photo ? (
+                        <img
+                          src={`https://spidexmarket.onrender.com/${cat.photo}`}
+                          className="img-fluid rounded"
+                          alt="category"/>):("No Image")}
+                    </td>
+                    <td className="fw-bold">{cat.name}</td>
+                    <td>
+                      {cat.subcategories?.length > 0
+                        ? cat.subcategories.join(", "):"None"}
+                    </td>
+                    <td>
+                      <button
+                        className="btn btn-sm btn-warning me-2"
+                        onClick={() => handleEdit(cat)}>
+                        <i className="bi bi-pen-fill"></i> Edit
+                      </button>
 
-        <input
-          type="file"
-          className="form-control mb-3"
-          onChange={(e) => setPhoto(e.target.files[0])}
-        />
-
-        <button className="btn btn-warning fw-bold" type="submit">
-          Add Category
-        </button>
-      </form>
-
-      {/* CATEGORY LIST */}
-      <h4 className="text-success">All Categories</h4>
-      <hr />
-
-      {loading ? (
-        <p>Loading categories...</p>
-      ) : categories.length === 0 ? (
-        <div className="alert alert-info">No categories found.</div>
-      ) : (
-        <table className="table table-bordered table-striped">
-          <thead className="table-warning">
-            <tr>
-              <th>Photo</th>
-              <th>Name</th>
-              <th>Subcategories</th>
-              <th className="text-center">Actions</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {categories.map((cat) => (
-              <tr key={cat._id}>
-                <td style={{ width: "120px" }}>
-                  {cat.photo ? (
-                    <img
-                      src={`https://spidexmarket.onrender.com/${cat.photo}`}
-                      alt="category"
-                      className="img-fluid rounded"
-                    />
-                  ) : (
-                    <span className="text-muted">No Image</span>
-                  )}
-                </td>
-
-                <td className="fw-bold">{cat.name}</td>
-
-                <td>
-                  {cat.subcategories?.length > 0 ? (
-                    cat.subcategories.join(", ")
-                  ) : (
-                    <span className="text-muted">None</span>
-                  )}
-                </td>
-
-                <td className="text-center">
-                  <button
-                    className="btn btn-sm btn-danger"
-                    onClick={() => deleteCategory(cat._id)}
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+                      <button
+                        className="btn btn-sm btn-danger"
+                        onClick={() => handleDelete(cat._id)} >
+                        <i className="bi bi-trash-fill"></i> Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
 
-export default Categories
+export default Categories;
