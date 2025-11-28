@@ -167,7 +167,7 @@ const ProductDetails = () => {
 
            {/* CHAT SELLER */}
            <Link
-             to={`/chat?seller=${product?.sellerId?._id}&product=${product?._id}`}
+             to={`/chat/=${product?.sellerId?._id}&product=${product?._id}`}
              className="btn btn-warning w-50"
              >
              Chat Seller

@@ -90,7 +90,7 @@ const ProductEdit = () => {
 
       files.forEach((f) => formData.append("photos", f));
 
-      await axios.put(`${API}/update/${productId}`, formData, {
+      await axios.put(`${API}/${productId}`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",

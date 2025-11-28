@@ -11,6 +11,8 @@ const Categories = () => {
 
   const url = "https://spidexmarket.onrender.com/api/category";
 
+  console.log(categories)
+
   // Fetch categories
   const fetchCategories = async () => {
     try {

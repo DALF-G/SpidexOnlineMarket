@@ -3,7 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 
-const API_CHAT = "https://spidexmarket.onrender.com/api/message";
+const API_CHAT = "https://spidexmarket.onrender.com/api/message/send";
 
 const SendMessage = ({ token }) => {
   const [params] = useSearchParams();

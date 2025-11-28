@@ -10,6 +10,8 @@ const Products = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+  console.log(products)
+
   const API = "https://spidexmarket.onrender.com/api/product";
 
   const authHeader = {
@@ -54,7 +56,7 @@ const Products = () => {
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this product?")) return;
     try {
-      await axios.delete(`${API}/delete/${id}`, authHeader);
+      await axios.delete(`${API}/${id}`, authHeader);
       toast.success("Product deleted");
       fetchProducts();
     } catch (err) {
@@ -109,9 +111,9 @@ const Products = () => {
                   <tr key={p._id}>
                     <td>{i + 1}</td>
                     <td style={{ width: 100 }}>
-                      {p.photo && p.photo.length > 0 ? (
+                      {p.photos && p.photos.length > 0 ? (
                         <img
-                          src={`https://spidexmarket.onrender.com/${p.photo[0]}`}
+                          src={`${p.photos[0]}`}
                           alt={p.title}
                           className="img-fluid rounded"
                         />
