@@ -13,11 +13,12 @@ const ChatPage = ({ sellerId }) => {
 
     // Send to API
     try {
-      await axios.post("https://spidexmarket.onrender.com/api/message", {
+      await axios.post("https://spidexmarket.onrender.com/api/message/send", {
         sellerId,
         text,
       });
-    } catch (error) {
+    } 
+    catch (error) {
       console.error("Error sending message", error);
     }
   };

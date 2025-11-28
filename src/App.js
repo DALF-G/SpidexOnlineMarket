@@ -35,6 +35,7 @@ import SellerBuyers from './components/seller/SellerBuyers';
 import SellerProductAdd from './components/seller/forms/SellerProductAdd';
 import SellerProductEdit from './components/seller/forms/SellerProductEdit';
 import SellerProductView from './components/seller/forms/SellerProductView';
+import SendMessage from './components/AllMessage';
 
 
 function App() {
@@ -46,6 +47,8 @@ function App() {
 
       <Route path="/products" element={<ProductsPage />} />
       <Route path="/product/:id" element={<PrivateRoute><ProductDetails /></PrivateRoute> } />
+      <Route path="/chat/:sellerId" element={<SendMessage />} />
+
 
       {/* Below are the admin routes */}
        <Route path='/admin-dashboard'

@@ -166,12 +166,12 @@ const ProductDetails = () => {
           </a>
 
            {/* CHAT SELLER */}
-          <Link
-           to={`https://spidexmarket.onrender.com/api/message/send=${product?.sellerId?._id}`}
-           className="btn btn-warning w-50"
-          >
+           <Link
+             to={`/chat?seller=${product?.sellerId?._id}&product=${product?._id}`}
+             className="btn btn-warning w-50"
+             >
              Chat Seller
-            </Link>
+           </Link>
 
           </div>
 
