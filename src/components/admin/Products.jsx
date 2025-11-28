@@ -43,7 +43,9 @@ const Products = () => {
       await axios.put(`${API}/toggle/${id}`, { isActive: !current }, authHeader);
       toast.success("Product status updated");
       fetchProducts();
-    } catch (err) {
+
+    } 
+    catch (err) {
       toast.error("Failed to update status");
       console.error(err);
     }
@@ -128,25 +130,43 @@ const Products = () => {
                       </span>
                     </td>
                     <td className="text-center">
-                      <button
-                        className={p.status === "active" ? "btn btn-sm btn-warning me-2" : "btn btn-sm btn-success me-2"}
-                        onClick={() => toggleActive(p._id, p.status === "active")}
-                      >
-                        {p.status === "active" ? "Hide" : "Activate"}
-                      </button>
+                    <div className="d-flex justify-content-center gap-1 flex-wrap">
 
-                      <button className="btn btn-sm btn-info me-2" onClick={() => navigate("/admin-dashboard/products/view", { state: { productId: p._id } })}>
-                        View
-                      </button>
+                    <button
+                       className="btn btn-info btn-sm px-2 py-1"
+                       style={{ fontSize: "12px" }}
+                       onClick={() =>
+                       navigate("/admin-dashboard/products/view", {
+                       state: { productId: p._id },
+                 })
+               }
+               >
+                View
+              </button>
 
-                      <button className="btn btn-sm btn-primary me-2" onClick={() => navigate("/admin-dashboard/products/edit", { state: { productId: p._id } })}>
-                        Edit
-                      </button>
+              <button
+                className="btn btn-primary btn-sm px-2 py-1"
+                style={{ fontSize: "12px" }}
+                onClick={() =>
+                navigate("/admin-dashboard/products/edit", {
+                state: { productId: p._id },
+              })
+            }
+           >
+             Edit
+          </button>
 
-                      <button className="btn btn-sm btn-danger" onClick={() => handleDelete(p._id)}>
-                        Delete
-                      </button>
-                    </td>
+             <button
+                className="btn btn-danger btn-sm px-2 py-1"
+                style={{ fontSize: "12px" }}
+                onClick={() => handleDelete(p._id)}
+                >
+                Delete
+                </button>
+
+                </div>
+                </td>
+
                   </tr>
                 ))}
               </tbody>

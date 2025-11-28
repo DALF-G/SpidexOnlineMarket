@@ -4,12 +4,12 @@ import { toast, ToastContainer } from "react-toastify";
 import axios from "axios";
 import { AuthContext } from "../../context/AuthContext";
 
-const Messages = () => {
+const SellerMessages = () => {
   const { token } = useContext(AuthContext);
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const API = "https://spidexmarket.onrender.com/api/admin/message";
+  const API = "https://spidexmarket.onrender.com/api/message";
 
   const authHeader = {
     headers: { Authorization: `Bearer ${token}` },
@@ -45,7 +45,7 @@ const Messages = () => {
       <nav aria-label="breadcrumb">
         <ol className="breadcrumb">
           <li className="breadcrumb-item">
-            <Link to="/admin-dashboard">Dashboard</Link>
+            <Link to="/seller-dashboard">Dashboard</Link>
           </li>
           <li className="breadcrumb-item active" aria-current="page">
             Messages
@@ -92,4 +92,4 @@ const Messages = () => {
   );
 };
 
-export default Messages;
+export default SellerMessages;

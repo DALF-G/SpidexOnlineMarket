@@ -1,61 +1,110 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
-import "./css/Home.css"
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const MyNavbar = () => {
+  const [categories, setCategories] = useState([]);
+  const navigate = useNavigate();
+
+  const CATEGORY_API = "https://spidexmarket.onrender.com/api/category";
+
+  // Fetch categories automatically
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const res = await axios.get(CATEGORY_API);
+        setCategories(res.data.categories || []);
+      } catch (err) {
+        console.error("Failed to load categories", err);
+      }
+    };
+    loadCategories();
+  }, []);
+
+  // handle searching
+  const handleSearch = (e) => {
+    e.preventDefault();
+    const query = e.target.search.value.trim();
+    const category = e.target.category.value;
+
+    // Build query URL
+    let url = "/products?";
+    if (query) url += `search=${query}&`;
+    if (category) url += `category=${category}`;
+
+    navigate(url);
+  };
+
   return (
-    <div>
-      {/* Navbar */}
-      <nav className='navbar navbar-expand-md navbar-dark navbar-custom' style={{ backgroundColor: '#150d0de2' }}>
-  <div className="container">
-      <Link className="navbar-brand text-brand" to={'/'}>Spidex Online Market</Link>
+    <nav className="navbar navbar-expand-md navbar-dark navbar-custom" style={{ backgroundColor: "#150d0de2" }}>
+      <div className="container">
 
-      <form className="d-flex ms-3" role="search">
-        <select className="form-select me-2" style={{ width: '180px' }}>
-         <option>Categories</option>
-         <option>Electronics</option>
-         <option>Vehicles</option>
-         <option>Fashion</option>
-         <option>Real Estate</option>
-         <option>Jobs</option>
-        </select>
-        <input className="form-control me-2" type="search" placeholder="Search products, categories..." />
-        <button className="btn btn-outline-warning" type="submit">Search</button>
-      </form>
+        <Link className="navbar-brand text-brand fw-bold" to="/">Spidex Online Market</Link>
 
-      {/* Below is my toggle button - either to expand or collapse content of the navbar */}
-      <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar">
+        <button
+          className="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarSupportedContent"
+        >
           <span className="navbar-toggler-icon"></span>
-      </button>
+        </button>
 
-      {/* Below is the Div that carries all the link to different pages */}
-        <div className="collapse navbar-collapse justify-content-end"  id="navbarnav">
-          <ul className="navbar-nav me-auto mb-1 mb-md-0">
-            <li className="nav-item"><Link to={"/"} className="nav-link active">Home</Link></li>
-            <li className="nav-item"><Link to="/products" className="nav-link" >Products</Link></li>
+        <div className="collapse navbar-collapse" id="navbarSupportedContent">
+
+          {/* SEARCH BAR */}
+          <form className="d-flex ms-md-3 mt-3 mt-md-0" style={{ flexGrow: 1 }} onSubmit={handleSearch}>
+            {/* Dynamic Category Dropdown */}
+            <select className="form-select me-2" name="category" style={{ maxWidth: 180 }}>
+              <option value="">Categories</option>
+              {categories.map((cat) => (
+                <option key={cat._id} value={cat.name}>
+                  {cat.name}
+                </option>
+              ))}
+            </select>
+
+            <input
+              name="search"
+              className="form-control me-2"
+              type="search"
+              placeholder="Search products..."
+            />
+
+            <button className="btn btn-outline-warning" type="submit">Search</button>
+          </form>
+
+          {/* NAV LINKS */}
+          <ul className="navbar-nav ms-auto mt-3 mt-md-0">
+
             <li className="nav-item">
-            <Link className="nav-link" to="/deals">Top Deals</Link>
+              <Link className="nav-link" to="/products">Explore Products</Link>
             </li>
+
             <li className="nav-item">
-            <Link className="nav-link" to="/premium">Boost Ad</Link>
+              <Link className="nav-link" to="/register">Sell</Link>
             </li>
+
+            <li className="nav-item">
+              <Link className="nav-link" to="/login">Login</Link>
+            </li>
+
+            <li className="nav-item">
+              <Link className="btn btn-warning nav-link text-dark ms-md-3 px-3" to="/register">
+                Register
+              </Link>
+            </li>
+
+            <li className="nav-item">
+              <Link className="nav-link" to="/">Home</Link>
+            </li>
+
           </ul>
 
-          {/* Right side controls */}
-          <div className="d-flex gap-2">
-            <Link  to="/register" className="btn btn-primary">
-              Register
-            </Link>
-            <Link  to="/login" className="btn btn-primary">
-              Login
-            </Link>   
-          </div>
         </div>
       </div>
     </nav>
-    
-    </div>
-  )
-}
+  );
+};
 
-export default MyNavbar
+export default MyNavbar;

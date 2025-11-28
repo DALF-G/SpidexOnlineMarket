@@ -23,7 +23,7 @@ const EditCategory = () => {
     return <p className="text-center mt-5">Invalid category selected</p>;
   }
 
-  const url = `https://spidexmarket.onrender.com/api/category/update/${category._id}`;
+  const url = `https://spidexmarket.onrender.com/api/category/${category._id}`;
 
   const handleSubmit = async (e) => {
     e.preventDefault();

@@ -35,7 +35,7 @@ const Categories = () => {
 
     try {
       toast.warning("Deleting category...");
-      await axios.delete(`${url}/delete/${id}`, {
+      await axios.delete(`${url}/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       fetchCategories();

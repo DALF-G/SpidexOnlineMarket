@@ -58,54 +58,105 @@ const Homecomponent = () => {
         </div>
       </section>
 
-      {/* Featured Categories */}
+      {/* FEATURED CATEGORIES */}
       <section className="py-5" id="categories">
         <div className="container">
           <h2 className="text-warning text-center mb-4">Top Categories</h2>
 
           <div className="row g-4">
+
+            {/* Electronics */}
             <div className="col-md-3 col-sm-6">
-              <div className="card h-100 text-center border-0 shadow-sm">
-                <img src="images/electronics.jpg" className="card-img-top" alt="Electronics" />
-                <div className="card-body">
-                  <h5 className="card-title">Electronics</h5>
-                  <p className="card-text small">Phones, laptops, TVs, accessories and more.</p>
+              <Link
+                to="/products?category=electronics"
+                className="text-decoration-none text-dark"
+              >
+                <div className="card h-100 text-center border-0 shadow-sm">
+                  <img
+                    src="images/electronics.jpg"
+                    className="card-img-top"
+                    alt="Electronics"
+                  />
+                  <div className="card-body">
+                    <h5 className="card-title">Electronics</h5>
+                    <p className="card-text small">
+                      Phones, laptops, TVs, accessories and more.
+                    </p>
+                  </div>
                 </div>
-              </div>
+              </Link>
             </div>
 
+            {/* Vehicles */}
             <div className="col-md-3 col-sm-6">
-              <div className="card h-100 text-center border-0 shadow-sm">
-                <img src="images/vehicles.jpg" className="card-img-top" alt="Vehicles" />
-                <div className="card-body">
-                  <h5 className="card-title">Vehicles</h5>
-                  <p className="card-text small">Buy and sell cars, bikes, and spare parts easily.</p>
+              <Link
+                to="/products?category=vehicles"
+                className="text-decoration-none text-dark"
+              >
+                <div className="card h-100 text-center border-0 shadow-sm">
+                  <img
+                    src="images/vehicles.jpg"
+                    className="card-img-top"
+                    alt="Vehicles"
+                  />
+                  <div className="card-body">
+                    <h5 className="card-title">Vehicles</h5>
+                    <p className="card-text small">
+                      Buy and sell cars, bikes & spare parts.
+                    </p>
+                  </div>
                 </div>
-              </div>
+              </Link>
             </div>
 
+            {/* Fashion */}
             <div className="col-md-3 col-sm-6">
-              <div className="card h-100 text-center border-0 shadow-sm">
-                <img src="images/fashion.jpg" className="card-img-top" alt="Fashion" />
-                <div className="card-body">
-                  <h5 className="card-title">Fashion</h5>
-                  <p className="card-text small">Explore clothing, shoes, and accessories from top sellers.</p>
+              <Link
+                to="/products?category=fashion"
+                className="text-decoration-none text-dark"
+              >
+                <div className="card h-100 text-center border-0 shadow-sm">
+                  <img
+                    src="images/fashion.jpg"
+                    className="card-img-top"
+                    alt="Fashion"
+                  />
+                  <div className="card-body">
+                    <h5 className="card-title">Fashion</h5>
+                    <p className="card-text small">
+                      Shop clothing, shoes and accessories.
+                    </p>
+                  </div>
                 </div>
-              </div>
+              </Link>
             </div>
 
+            {/* Real Estate */}
             <div className="col-md-3 col-sm-6">
-              <div className="card h-100 text-center border-0 shadow-sm">
-                <img src="images/realestate.jpg" className="card-img-top" alt="Real Estate" />
-                <div className="card-body">
-                  <h5 className="card-title">Real Estate</h5>
-                  <p className="card-text small">Find homes, apartments, and land for sale or rent.</p>
+              <Link
+                to="/products?category=realestate"
+                className="text-decoration-none text-dark"
+              >
+                <div className="card h-100 text-center border-0 shadow-sm">
+                  <img
+                    src="images/realestate.jpg"
+                    className="card-img-top"
+                    alt="Real Estate"
+                  />
+                  <div className="card-body">
+                    <h5 className="card-title">Real Estate</h5>
+                    <p className="card-text small">
+                      Homes, apartments & land for sale or rent.
+                    </p>
+                  </div>
                 </div>
-              </div>
+              </Link>
             </div>
+
           </div>
         </div>
       </section>
+
 
       {/*Why Choose Spidex Market*/}
       <section className="py-5 bg-light" id="whyspidex">

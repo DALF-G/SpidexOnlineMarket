@@ -8,53 +8,87 @@ const ProductAdd = () => {
   const { token } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const API = "https://spidexmarket.onrender.com/api/product/add";
-  const CATEGORY_API = "https://spidexmarket.onrender.com/api/category/add";
+  const PRODUCT_API = "https://spidexmarket.onrender.com/api/product";
+  const CATEGORY_API = "https://spidexmarket.onrender.com/api/category";
+  const USERS_API = "https://spidexmarket.onrender.com/api/admin/users";
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
+
   const [category, setCategory] = useState("");
   const [subCategory, setSubCategory] = useState("");
+
   const [condition, setCondition] = useState("new");
   const [location, setLocation] = useState("");
+
+  const [sellerId, setSellerId] = useState("");
+  const [useLoggedInSeller, setUseLoggedInSeller] = useState(false);
+
   const [isFeatured, setIsFeatured] = useState(false);
   const [files, setFiles] = useState([]);
-  const [sellerId, setSellerId] = useState(""); // admin can choose seller id or default to current user if available
 
   const [categories, setCategories] = useState([]);
+  const [subcategoriesList, setSubcategoriesList] = useState([]);
+
+  const [sellers, setSellers] = useState([]);
 
   const authHeader = {
     headers: { Authorization: `Bearer ${token}` },
   };
 
+  // Fetch categories
   const fetchCategories = useCallback(async () => {
     try {
       const res = await axios.get(`${CATEGORY_API}/`);
-      setCategories(res.data.categories || res.data || []);
+      setCategories(res.data.categories || []);
     } catch (err) {
-      console.error("Failed load categories", err);
+      console.error(err);
     }
   }, []);
 
+  // Fetch sellers
+  const fetchSellers = useCallback(async () => {
+    try {
+      const res = await axios.get(`${USERS_API}`, authHeader);
+      const sellerList = res.data.users.filter(
+        (u) => u.role === "seller" && u.isApprovedSeller
+      );
+      setSellers(sellerList);
+    } catch (err) {
+      console.error("Error loading sellers", err);
+    }
+  }, [token]);
+
   useEffect(() => {
     fetchCategories();
-  }, [fetchCategories]);
+    fetchSellers();
+  }, [fetchCategories, fetchSellers]);
 
-  const handleFiles = (e) => {
-    setFiles(Array.from(e.target.files || []));
-  };
+  // When category changes → load its subcategories
+  useEffect(() => {
+    const selected = categories.find((c) => c.name === category);
+    setSubcategoriesList(selected?.subcategories || []);
+  }, [category, categories]);
+
+  const handleFiles = (e) => setFiles([...e.target.files]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!title || !price || !category || !condition || !location || !sellerId) {
-      toast.error("Please fill required fields (title, price, category, seller, condition, location)");
+    if (!title || !price || !category || !condition || !location) {
+      toast.error("Please fill all required fields");
+      return;
+    }
+
+    if (!sellerId) {
+      toast.error("Please select a seller");
       return;
     }
 
     try {
       toast.info("Uploading product...");
+
       const formData = new FormData();
       formData.append("title", title);
       formData.append("description", description);
@@ -66,28 +100,26 @@ const ProductAdd = () => {
       formData.append("sellerId", sellerId);
       formData.append("isFeatured", isFeatured);
 
-      files.forEach((f) => formData.append("photos", f)); // your backend expects 'photos' (upload.array('photos', 5))
+      files.forEach((file) => formData.append("photos", file));
 
-      const res = await axios.post(`${API}/add`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
+      const res = await axios.post(`${PRODUCT_API}/add`, formData, {
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "multipart/form-data" },
       });
 
       toast.dismiss();
-      toast.success(res.data.message || "Product added");
+      toast.success(res.data.message || "Product added successfully!");
       navigate("/admin-dashboard/products");
+
     } catch (err) {
       toast.dismiss();
-      toast.error(err.response?.data?.message || "Error adding product");
-      console.error(err);
+      toast.error(err.response?.data?.message || "Product upload failed");
     }
   };
 
   return (
     <div className="container mt-3">
-      <ToastContainer position="top-right" autoClose={2500}/>
+      <ToastContainer position="top-right" autoClose={2200} />
+
       <nav aria-label="breadcrumb">
         <ol className="breadcrumb">
           <li className="breadcrumb-item"><Link to="/admin-dashboard">Dashboard</Link></li>
@@ -100,16 +132,19 @@ const ProductAdd = () => {
         <h5 className="text-success mb-3">Add New Product</h5>
 
         <form onSubmit={handleSubmit}>
+          {/* Title */}
           <div className="mb-3">
             <label className="form-label">Title *</label>
             <input type="text" className="form-control" value={title} onChange={(e)=>setTitle(e.target.value)} required />
           </div>
 
+          {/* Description */}
           <div className="mb-3">
             <label className="form-label">Description</label>
-            <textarea className="form-control" rows={4} value={description} onChange={(e)=>setDescription(e.target.value)} />
+            <textarea className="form-control" rows={3} value={description} onChange={(e)=>setDescription(e.target.value)} />
           </div>
 
+          {/* Price + Category + Subcategory */}
           <div className="row">
             <div className="col-md-4 mb-3">
               <label className="form-label">Price (KES) *</label>
@@ -120,16 +155,24 @@ const ProductAdd = () => {
               <label className="form-label">Category *</label>
               <select className="form-select" value={category} onChange={(e)=>setCategory(e.target.value)} required>
                 <option value="">Choose category</option>
-                {categories.map((c) => <option key={c._id || c.name} value={c.name || c._id}>{c.name}</option>)}
+                {categories.map((c) => (
+                  <option key={c._id} value={c.name}>{c.name}</option>
+                ))}
               </select>
             </div>
 
             <div className="col-md-4 mb-3">
               <label className="form-label">Subcategory</label>
-              <input type="text" className="form-control" value={subCategory} onChange={(e)=>setSubCategory(e.target.value)} />
+              <select className="form-select" value={subCategory} onChange={(e)=>setSubCategory(e.target.value)}>
+                <option value="">Choose subcategory</option>
+                {subcategoriesList.map((s, i) => (
+                  <option key={i} value={s}>{s}</option>
+                ))}
+              </select>
             </div>
           </div>
 
+          {/* Condition + Location */}
           <div className="row">
             <div className="col-md-4 mb-3">
               <label className="form-label">Condition *</label>
@@ -144,25 +187,32 @@ const ProductAdd = () => {
               <input type="text" className="form-control" value={location} onChange={(e)=>setLocation(e.target.value)} required />
             </div>
 
+            {/* Seller Selection */}
             <div className="col-md-4 mb-3">
-              <label className="form-label">Seller ID *</label>
-              <input type="text" className="form-control" value={sellerId} onChange={(e)=>setSellerId(e.target.value)} placeholder="Seller ObjectId" required />
+              <label className="form-label">Seller *</label>
+              <select className="form-select" value={sellerId} onChange={(e)=>setSellerId(e.target.value)} required>
+                <option value="">Select seller</option>
+                {sellers.map((s) => (
+                  <option key={s._id} value={s._id}>{s.name} ({s.email})</option>
+                ))}
+              </select>
             </div>
           </div>
 
+          {/* Photos */}
           <div className="mb-3">
             <label className="form-label">Photos (max 5)</label>
             <input type="file" className="form-control" multiple accept="image/*" onChange={handleFiles} />
           </div>
 
+          {/* Featured checkbox */}
           <div className="form-check mb-3">
-            <input type="checkbox" className="form-check-input" id="featured" checked={isFeatured} onChange={(e)=>setIsFeatured(e.target.checked)} />
-            <label className="form-check-label" htmlFor="featured">Featured</label>
+            <input type="checkbox" className="form-check-input" checked={isFeatured} onChange={(e)=>setIsFeatured(e.target.checked)} />
+            <label className="form-check-label">Featured</label>
           </div>
 
-          <div className="d-grid">
-            <button className="btn btn-warning">Add Product</button>
-          </div>
+          {/* Submit */}
+          <button className="btn btn-warning w-100">Add Product</button>
         </form>
       </div>
     </div>
