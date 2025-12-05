@@ -1,11 +1,25 @@
-import React from 'react'
+import React from "react";
+import { Outlet } from "react-router-dom";
+import SideBar from "./SideBar";
 
 const BuyerLayout = () => {
   return (
-    <div>
-      <h1>Welcome to the buyer Dashboard</h1>
-    </div>
-  )
-}
+    <div className="container-fluid">
+      <div className="row">
+        
+        {/* Sidebar */}
+        <div className="col-md-3 col-lg-2 p-0">
+          <SideBar />
+        </div>
 
-export default BuyerLayout
+        {/* Main content */}
+        <div className="col-md-9 col-lg-10 p-4">
+          <Outlet />
+        </div>
+
+      </div>
+    </div>
+  );
+};
+
+export default BuyerLayout;

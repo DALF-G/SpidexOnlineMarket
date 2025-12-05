@@ -8,6 +8,8 @@ const SellerProducts = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+  console.log(products)
+
   const API = "https://spidexmarket.onrender.com/api/product"; 
   const token = localStorage.getItem("token");
 
@@ -20,7 +22,7 @@ const SellerProducts = () => {
     try {
       setLoading(true);
       const res = await axios.get(
-        "https://spidexmarket.onrender.com/api/sellerstats/products",
+        "https://spidexmarket.onrender.com/api/product/my-products",
         authHeader
       );
       setProducts(res.data.products || []);
@@ -41,7 +43,7 @@ const SellerProducts = () => {
     if (!window.confirm("Do you want to delete this product?")) return;
 
     try {
-      await axios.delete(`${API}/delete/${id}`, authHeader);
+      await axios.delete(`${API}/${id}`, authHeader);
       toast.success("Product deleted");
       fetchProducts();
     } 
@@ -93,9 +95,9 @@ const SellerProducts = () => {
                   <td>{index + 1}</td>
 
                   <td>
-                    {product.photo?.length > 0 ? (
+                    {product.photos?.length > 0 ? (
                       <img
-                        src={`https://spidexmarket.onrender.com/${product.photo[0]}`}
+                        src={`${product.photos[0]}`}
                         alt={product.title}
                         width="60"
                         height="60"

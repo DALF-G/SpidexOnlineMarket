@@ -50,7 +50,7 @@ const SellerProductEdit = () => {
           condition: p.condition || "new",
           location: p.location || "",
           isFeatured: p.isFeatured || false,
-          photos: p.photo || [],
+          photos: p.photos || [],
         });
         setLoading(false);
       } catch (err) {
@@ -94,7 +94,7 @@ const SellerProductEdit = () => {
       formData.append("existingPhotos", JSON.stringify(form.photos || []));
       newFiles.forEach(f => formData.append("photos", f));
 
-      const res = await axios.put(`${API}/update/${productId}`, formData, {
+      const res = await axios.put(`${API}/${productId}`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",

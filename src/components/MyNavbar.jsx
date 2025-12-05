@@ -78,7 +78,7 @@ const MyNavbar = () => {
           <ul className="navbar-nav ms-auto mt-3 mt-md-0">
 
             <li className="nav-item">
-              <Link className="nav-link" to="/products">Explore Products</Link>
+              <Link className="nav-link" to="/about">About Us</Link>
             </li>
 
             <li className="nav-item">

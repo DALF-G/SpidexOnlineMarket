@@ -18,6 +18,7 @@ const SellerDashboard = () => {
       premiumAds: []
     }
   });
+console.log("This is what is contained inside of products: ", stats.recent.products)
 
   const fetchStats = async () => {
     const token = localStorage.getItem('token');
@@ -65,7 +66,6 @@ const SellerDashboard = () => {
                   <thead className="table-primary">
                     <tr>
                       <th>#</th>
-                      <th>Photo</th>
                       <th>Title</th>
                       <th>Price</th>
                       <th>Category</th>
@@ -76,20 +76,6 @@ const SellerDashboard = () => {
                     {stats.recent?.products?.map((product, index) => (
                       <tr key={index}>
                         <td>{index + 1}</td>
-                        <td>
-                          {product.photo?.length > 0 ? (
-                            <img
-                              src={product.photo[0]}
-                              alt={product.title}
-                              width="50"
-                              height="50"
-                              className="rounded-circle"
-                              style={{ objectFit: 'cover' }}
-                            />
-                          ) : (
-                            <span>No Image</span>
-                          )}
-                        </td>
                         <td>{product.title || 'N/A'}</td>
                         <td>Ksh. {product.price || 0}</td>
                         <td>{product.category || 'N/A'}</td>

@@ -102,9 +102,9 @@ const AdminDashboard = () => {
                       <tr key={index}>
                         <td>{index + 1}</td>
                         <td>
-                          {product.photo.length > 0 ? (
+                          {product.photos.length > 0 ? (
                             <img 
-                              src={product.photo[0]} 
+                              src={product.photos[0]} 
                               alt={product.title} 
                               width="50" 
                               height="50" 

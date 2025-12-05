@@ -37,7 +37,7 @@ const SellerProductView = () => {
     load();
   }, [productId]);
 
-  const handleEdit = () => navigate("/seller-dashboard/product/edit", { state: { productId } });
+  const handleEdit = () => navigate("/seller-dashboard/products/edit", { state: { productId } });
 
   const handleDelete = async () => {
     if (!window.confirm("Delete this product?")) return;
@@ -72,15 +72,18 @@ const SellerProductView = () => {
 
         <div className="row">
           <div className="col-md-5">
-            {product.photo && product.photo.length > 0 ? (
-              <img src={product.photo[0].startsWith("http") ? product.photo[0] : `https://spidexmarket.onrender.com/${product.photo[0]}`} alt={product.title} className="img-fluid rounded" />
+            {product.photos && product.photos.length > 0 ? (
+              <img src={product.photos[0].startsWith("http") ? product.photos[0] : 
+                `https://spidexmarket.onrender.com/${product.photos[0]}`}
+               alt={product.title} className="img-fluid rounded" />
             ) : (
               <div className="text-muted">No image</div>
             )}
 
             <div className="d-flex gap-2 mt-2 flex-wrap">
-              {product.photo && product.photo.slice(1).map((p, i) => (
-                <img key={i} src={p.startsWith("http") ? p : `https://spidexmarket.onrender.com/${p}`} alt={`thumb-${i}`} width="80" className="rounded" />
+              {product.photos && product.photos.slice(1).map((p, i) => (
+                <img key={i} src={p.startsWith("http") ? p : `https://spidexmarket.onrender.com/${p}`}
+                 alt={`thumb-${i}`} width="80" className="rounded" />
               ))}
             </div>
           </div>

@@ -21,10 +21,10 @@ const ProductDetails = () => {
       const p = res.data.product || res.data;
 
       setProduct(p);
+
+      // Set first image as main preview
       setActiveImage(
-        p?.photo?.length > 0
-          ? `https://spidexmarket.onrender.com/${p.photo[0]}`
-          : ""
+        p?.photos?.length > 0 ? `${p.photos[0]}` : ""
       );
 
       fetchRelated(p.category);
@@ -45,7 +45,7 @@ const ProductDetails = () => {
         .filter(
           (item) =>
             item._id !== id &&
-            item.category.toLowerCase() === categoryName.toLowerCase()
+            item.category?.toLowerCase() === categoryName?.toLowerCase()
         )
         .slice(0, 4);
 
@@ -57,7 +57,6 @@ const ProductDetails = () => {
 
   useEffect(() => {
     fetchProduct();
-    // eslint-disable-next-line
   }, [id]);
 
   if (loading) {
@@ -90,6 +89,8 @@ const ProductDetails = () => {
       <div className="row mt-3">
         {/* LEFT – IMAGES */}
         <div className="col-md-6">
+
+          {/* MAIN PREVIEW IMAGE — controlled by activeImage */}
           <img
             src={activeImage}
             alt="Main"
@@ -99,22 +100,20 @@ const ProductDetails = () => {
 
           {/* Thumbnail Row */}
           <div className="d-flex gap-2">
-            {product.photo?.map((img, index) => (
+            {product?.photos?.map((img, index) => (
               <img
                 key={index}
-                src={`https://spidexmarket.onrender.com/${img}`}
+                src={img}
                 alt="thumb"
-                onClick={() =>
-                  setActiveImage(
-                    `https://spidexmarket.onrender.com/${img}`
-                  )
-                }
+                onClick={() => setActiveImage(img)}
                 className="rounded border"
                 style={{
                   width: "70px",
                   height: "70px",
                   objectFit: "cover",
                   cursor: "pointer",
+                  border:
+                    activeImage === img ? "2px solid #ff9900" : "1px solid #ccc",
                 }}
               />
             ))}
@@ -157,24 +156,22 @@ const ProductDetails = () => {
           {/* Buttons */}
           <div className="mt-4 d-flex gap-3">
 
-          {/* CALL SELLER */}
-         <a
-             href={`tel:${product?.sellerId?.phone}`}
-             className="btn btn-success w-50"
-             >
-             Call Seller
-          </a>
+            {/* CALL SELLER */}
+            <a
+              href={`tel:${product?.sellerId?.phone}`}
+              className="btn btn-success w-50"
+            >
+              Call Seller
+            </a>
 
-           {/* CHAT SELLER */}
-           <Link
-             to={`/chat/=${product?.sellerId?._id}&product=${product?._id}`}
-             className="btn btn-warning w-50"
-             >
-             Chat Seller
-           </Link>
-
+            {/* CHAT SELLER */}
+            <Link
+              to={`/chat/=${product?.sellerId?._id}&product=${product?._id}`}
+              className="btn btn-warning w-50"
+            >
+              Chat Seller
+            </Link>
           </div>
-
         </div>
       </div>
 
@@ -192,8 +189,8 @@ const ProductDetails = () => {
                   <Link to={`/product/${p._id}`}>
                     <img
                       src={
-                        p.photo?.length > 0
-                          ? `https://spidexmarket.onrender.com/${p.photo[0]}`
+                        p.photos?.length > 0
+                          ? p.photos[0]
                           : "https://via.placeholder.com/300"
                       }
                       alt={p.title}

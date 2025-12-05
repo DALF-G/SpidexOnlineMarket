@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
+import MyNavbar from "./MyNavbar";
+import MyFooter from "./MyFooter";
 
 const ProductsPage = () => {
   const [products, setProducts] = useState([]);
@@ -92,7 +94,9 @@ const ProductsPage = () => {
     return <p className="text-center mt-5">Loading products...</p>;
 
   return (
+
     <div className="container py-4">
+      
       <ToastContainer />
 
       {/* BREADCRUMB */}
@@ -163,8 +167,8 @@ const ProductsPage = () => {
                 <Link to={`/product/${product._id}`}>
                   <img
                     src={
-                      product.photo?.[0]
-                        ? `https://spidexmarket.onrender.com/${product.photo[0]}`
+                      product.photos?.[0]
+                        ? `${product.photos[0]}`
                         : "https://via.placeholder.com/300"
                     }
                     alt={product.title}
@@ -193,6 +197,7 @@ const ProductsPage = () => {
       )}
 
       <div className="my-5"></div>
+     
     </div>
   );
 };

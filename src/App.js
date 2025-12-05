@@ -36,6 +36,12 @@ import SellerProductAdd from './components/seller/forms/SellerProductAdd';
 import SellerProductEdit from './components/seller/forms/SellerProductEdit';
 import SellerProductView from './components/seller/forms/SellerProductView';
 import SendMessage from './components/AllMessage';
+import BuyerDashboard from "./components/buyer/BuyerDashboard";
+import BuyerLayout from "./components/buyer/BuyerLayout";
+import BuyerMessages from './components/buyer/BuyerMessages';
+import BuyerOrders from './components/buyer/BuyerOrders';
+import BuyerProfile from './components/buyer/BuyerProfile';
+import AboutUs from './components/AboutUs';
 
 
 function App() {
@@ -46,6 +52,7 @@ function App() {
       <Route path='/' element ={<Homecomponent/>} />
 
       <Route path="/products" element={<ProductsPage />} />
+      <Route path='/about' element={<AboutUs/>} />
       <Route path="/product/:id" element={<PrivateRoute><ProductDetails /></PrivateRoute> } />
       <Route path="/chat/:sellerId" element={<SendMessage />} />
 
@@ -92,6 +99,21 @@ function App() {
       <Route path='/register' element={<Registercomponent/>} />
       <Route path='/adminregister' element={<AdminRegistercomponent/>} />
       <Route path='/login' element={<Logincomponent/>} />
+
+      {/*Below are Buyers routes */}
+      <Route
+  path="/buyer-dashboard"
+  element={
+    <ProtectedRoute allowedRoles={['buyer']}>
+      <BuyerLayout />
+    </ProtectedRoute>
+  }
+>
+  <Route path="" element={<BuyerDashboard />} />
+  <Route path="profile" element={<BuyerProfile />} />
+  <Route path="orders" element={<BuyerOrders />} />
+  <Route path="messages" element={<BuyerMessages />} />
+</Route>
 
       {/* Defaults */}
        <Route path='/not-authorized' element={<NotAuthorized/>} />

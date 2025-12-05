@@ -9,6 +9,8 @@ const Categories = () => {
   const [categories, setCategories] = useState([]);
   const navigate = useNavigate();
 
+  
+
   const url = "https://spidexmarket.onrender.com/api/category";
 
   console.log(categories)
@@ -116,7 +118,7 @@ const Categories = () => {
                     <td style={{ width: "120px" }}>
                       {cat.photo ? (
                         <img
-                          src={`https://spidexmarket.onrender.com/${cat.photo}`}
+                          src={`${cat.photo}`}
                           className="img-fluid rounded"
                           alt="category"/>):("No Image")}
                     </td>
