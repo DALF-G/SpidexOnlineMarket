@@ -116,7 +116,7 @@ const AdminDashboard = () => {
                           )}
                         </td>
                         <td>{product.title}</td>
-                        <td>{product.seller.name}</td>
+                        <td>{product.seller?.name}</td>
                         <td>${product.price}</td>
                         <td>{product.category}</td>
                         <td>{product.status}</td>

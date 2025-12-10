@@ -387,12 +387,12 @@ const ProductsPage = () => {
     }
 
     if (user.role === "seller") {
-      navigate(`/seller/forms/ProductView/${id}`);
+      navigate(`/seller-dashboard/products/view`);
       return;
     }
 
     // default (admin or other roles)
-    navigate(`/admin/forms/ProductView/${id}`);
+    navigate(`/admin-dashboard/products`);
   };
 
   // If loading show spinner

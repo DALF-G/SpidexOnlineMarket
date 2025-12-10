@@ -35,16 +35,14 @@ import SellerBuyers from './components/seller/SellerBuyers';
 import SellerProductAdd from './components/seller/forms/SellerProductAdd';
 import SellerProductEdit from './components/seller/forms/SellerProductEdit';
 import SellerProductView from './components/seller/forms/SellerProductView';
-import SendMessage from './components/AllMessage';
 import BuyerDashboard from "./components/buyer/BuyerDashboard";
 import BuyerLayout from "./components/buyer/BuyerLayout";
 import BuyerMessages from './components/buyer/BuyerMessages';
 import BuyerOrders from './components/buyer/BuyerOrders';
 import BuyerProfile from './components/buyer/BuyerProfile';
 import AboutUs from './components/AboutUs';
-import BuyerChat from './components/buyer/BuyerChat';
 import BuyerProductView from "./components/buyer/forms/ProductView";
-import SellerChat from './components/seller/SellerChat';
+import ChatBox from './components/messages/ChatBox';
 
 
 
@@ -58,7 +56,8 @@ function App() {
       <Route path="/products" element={<ProductsPage />} />
       <Route path='/about' element={<AboutUs/>} />
       <Route path="/product/:id" element={<PrivateRoute><ProductDetails /></PrivateRoute> } />
-      <Route path="/chat/:sellerId" element={<SendMessage />} />
+
+      <Route path="/messages" element={<ProductsPage />} />
 
 
       {/* Below are the admin routes */}
@@ -96,8 +95,8 @@ function App() {
         <Route path='buyers' element={<SellerBuyers/>} />
         <Route path='messages' element={<SellerMessages/>} />
         {/* This is the chat screen */}
-        <Route path="messages/chat/:buyerId" element={<SellerChat />} />
-        
+        <Route path="messages/chat/:buyerId" element={<ChatBox />} />
+
         <Route path="products/add" element={<SellerProductAdd />} />
         <Route path="products/edit" element={<SellerProductEdit />} />
         <Route path="products/view" element={<SellerProductView />} />
@@ -122,7 +121,7 @@ function App() {
   <Route path="messages" element={<BuyerMessages />} />
 
   {/* This is the chat screen */}
-  <Route path="messages/chat/:sellerId" element={<BuyerChat />} />
+  <Route path="messages/chat/:sellerId" element={<ChatBox />} />
 
   {/* Product View inside buyer dashboard */}
   <Route path="product/:id" element={<BuyerProductView />} />
