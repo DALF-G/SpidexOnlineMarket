@@ -21,26 +21,19 @@ const MyNavbar = () => {
     loadCategories();
   }, []);
 
-  // handle searching
-  const handleSearch = (e) => {
-    e.preventDefault();
-    const query = e.target.search.value.trim();
-    const category = e.target.category.value;
-
-    // Build query URL
-    let url = "/products?";
-    if (query) url += `search=${query}&`;
-    if (category) url += `category=${category}`;
-
-    navigate(url);
-  };
-
   return (
-    <nav className="navbar navbar-expand-md navbar-dark navbar-custom" style={{ backgroundColor: "#150d0de2" }}>
+    <nav
+      className="navbar navbar-expand-md navbar-dark navbar-custom"
+      style={{ backgroundColor: "#150d0de2" }}
+    >
       <div className="container">
 
-        <Link className="navbar-brand text-brand fw-bold" to="/">Spidex Online Market</Link>
+        {/* BRAND */}
+        <Link className="navbar-brand text-brand fw-bold" to="/">
+          Spidex Market
+        </Link>
 
+        {/* TOGGLER */}
         <button
           className="navbar-toggler"
           type="button"
@@ -50,53 +43,38 @@ const MyNavbar = () => {
           <span className="navbar-toggler-icon"></span>
         </button>
 
+        {/* NAV CONTENT */}
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
 
-          {/* SEARCH BAR */}
-          <form className="d-flex ms-md-3 mt-3 mt-md-0" style={{ flexGrow: 1 }} onSubmit={handleSearch}>
-            {/* Dynamic Category Dropdown */}
-            <select className="form-select me-2" name="category" style={{ maxWidth: 180 }}>
-              <option value="">Categories</option>
-              {categories.map((cat) => (
-                <option key={cat._id} value={cat.name}>
-                  {cat.name}
-                </option>
-              ))}
-            </select>
-
-            <input
-              name="search"
-              className="form-control me-2"
-              type="search"
-              placeholder="Search products..."
-            />
-
-            <button className="btn btn-outline-warning" type="submit">Search</button>
-          </form>
-
-          {/* NAV LINKS */}
-          <ul className="navbar-nav ms-auto mt-3 mt-md-0">
-
+          {/* RIGHT SIDE LINKS */}
+          <ul className="navbar-nav ms-auto d-flex align-items-center gap-2 mt-3 mt-md-0">
+            
             <li className="nav-item">
-              <Link className="nav-link" to="/about">About Us</Link>
-            </li>
-
-            <li className="nav-item">
-              <Link className="nav-link" to="/register">Sell</Link>
-            </li>
-
-            <li className="nav-item">
-              <Link className="nav-link" to="/login">Login</Link>
-            </li>
-
-            <li className="nav-item">
-              <Link className="btn btn-warning nav-link text-dark ms-md-3 px-3" to="/register">
-                Register
+              <Link className="nav-link px-3" to="/about">
+                About Us
               </Link>
             </li>
 
             <li className="nav-item">
-              <Link className="nav-link" to="/">Home</Link>
+              <Link className="nav-link px-3" to="/register">
+                Sell
+              </Link>
+            </li>
+
+            <li className="nav-item">
+              <Link className="nav-link px-3" to="/login">
+                Login
+              </Link>
+            </li>
+
+            {/* REGISTER BUTTON */}
+            <li className="nav-item">
+              <Link
+                className="btn btn-warning text-dark px-4 ms-md-2"
+                to="/register"
+              >
+                Register
+              </Link>
             </li>
 
           </ul>

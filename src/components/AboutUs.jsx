@@ -132,7 +132,7 @@ const AboutUs = () => {
             {/* Real Estate */}
             <div className="col-md-3 col-sm-6">
               <Link
-                to="/products?category=realestate"
+                to="/products?category=real estate"
                 className="text-decoration-none text-dark"
               >
                 <div className="card h-100 text-center border-0 shadow-sm">

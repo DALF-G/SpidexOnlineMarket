@@ -9,7 +9,7 @@ const SellerMessages = () => {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const API = "https://spidexmarket.onrender.com/api/message";
+  const API = "https://spidexmarket.onrender.com/api/message/my";
 
   const authHeader = {
     headers: { Authorization: `Bearer ${token}` },
@@ -18,16 +18,17 @@ const SellerMessages = () => {
   const fetchMessages = async () => {
     try {
       toast.info("Loading messages…");
+
       const res = await axios.get(API, authHeader);
-      setMessages(res.data.msgs || []);
+
+      setMessages(res.data.messages || []); // ⬅ matches controller response
+
       toast.dismiss();
-    } 
-    catch (err) {
+    } catch (err) {
       toast.dismiss();
       toast.error("Failed to load messages");
       console.error(err);
-    } 
-    finally {
+    } finally {
       setLoading(false);
     }
   };

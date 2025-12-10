@@ -54,7 +54,7 @@ const LoginComponent = () => {
           navigate("/seller-dashboard");
         }
       } else {
-        navigate("/");
+        navigate("/buyer-dashboard");
       }
     } catch (err) {
       console.error("Login error:", err.response || err);

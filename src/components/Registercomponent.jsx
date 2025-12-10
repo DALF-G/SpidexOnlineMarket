@@ -80,7 +80,7 @@ const Registercomponent = () => {
               className="card shadow-lg p-4 bg-light border-0 rounded-4"
             >
               <h2 className="text-center text-warning mb-2">
-                Spidex Online Market
+                Spidex Market
               </h2>
               <h5 className="text-center text-success mb-4">
                 Create Your Account

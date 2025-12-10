@@ -5,7 +5,6 @@ import axios from "axios";
 import MyFooter from "./MyFooter";
 
 const AdminRegistercomponent = () => {
-  // State Hooks
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -16,31 +15,26 @@ const AdminRegistercomponent = () => {
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
 
-  //  below is the redirecting timer
   const [countdown, setCountdown] = useState(6);
-  // Declare the navigate hook such that if a person successfully register, he can be redirected to login page
   const navigate = useNavigate();
 
-  // ADMIN registration endpoint (same backend)
   const url = "https://spidexmarket.onrender.com/api/admin/register";
 
-  // Submit handler
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading("Creating Admin Account... please wait...");
+    setError("");
+    setSuccess("");
 
     try {
-      // Admin ALWAYS has role "admin"
-      const data = { name, email, password,phone, role: "admin", secretkey };
+      const data = { name, email, password, phone, secretkey };
 
       const res = await axios.post(url, data);
-
-      console.log("Registration Success:", res.data)
 
       setLoading("");
       setSuccess(res.data.message);
 
-      // Auto redirect after 6 seconds
+      // Redirect Timer
       let counter = 6;
       const interval = setInterval(() => {
         counter--;
@@ -49,9 +43,8 @@ const AdminRegistercomponent = () => {
           clearInterval(interval);
           navigate("/login");
         }
-      }, 1000);;
+      }, 1000);
 
-      // Clear values
       setName("");
       setEmail("");
       setPhone("");
@@ -62,7 +55,7 @@ const AdminRegistercomponent = () => {
       setLoading("");
       setError(
         err.response?.data?.message ||
-          "Registration failed. something went wrong."
+        "Registration failed. Something went wrong."
       );
     }
   };
@@ -79,7 +72,7 @@ const AdminRegistercomponent = () => {
               className="card shadow-lg p-4 bg-light border-0 rounded-4"
             >
               <h2 className="text-center text-warning mb-2">
-                Spidex Online Market
+                Spidex Market
               </h2>
               <h5 className="text-center text-success mb-4">
                 Admin Registration
@@ -95,66 +88,66 @@ const AdminRegistercomponent = () => {
                 </div>
               )}
 
-<input 
-          type="text" 
-          placeholder="Enter Your Name Here" 
-          className='form-control mb-3'
-          required
-          value={name}
-          onChange={(e) => {setName(e.target.value)}}
-          />
-
-{/* {name} */}
-
-<input type="email" 
-placeholder='Enter Your Email Here'
-className="form-control mb-3" 
-required
-value={email}
-onChange={(e) => {setEmail(e.target.value)}}
-/>
-{/* {email} */}
-
-<input type="password" 
-placeholder='Enter Your Password Here'
-className="form-control mb-3"
-required
-value={password}
-onChange={(e) => {setPassword(e.target.value)}}
- />
- {/* {password} */}
-
-            {/* phone */}
-             <input
-               type="tel"
-               placeholder="Phone Number"
-               className="form-control mb-3"
-               required
-               value={phone}
-               onChange={(e) => setPhone(e.target.value)}
+              <input
+                type="text"
+                placeholder="Enter Your Name"
+                className="form-control mb-3"
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
               />
 
- <input type="password" 
- placeholder='Enter Your Admin secretkey Here'
- className="form-control mb-3" 
- required
- value={secretkey}
-onChange={(e) => {setSecretkey(e.target.value)}}
- />
- {/* {secretKey} */}
- <br />
+              <input
+                type="email"
+                placeholder="Enter Your Email"
+                className="form-control mb-3"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
 
- <div className="d-grid mb-3">
-  <button type="submit " className="btn btn-outline-success">Register</button>
- </div>
- <div className="text-center">
-  <p>Already Have an Account? {' '} 
-    <Link to={"/login"} className='text-decoration-none'>Login
-    </Link>
+              <input
+                type="password"
+                placeholder="Enter Password"
+                className="form-control mb-3"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
 
-  </p>
+              <input
+                type="tel"
+                placeholder="Phone Number"
+                className="form-control mb-3"
+                required
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+              />
 
+              <input
+                type="password"
+                placeholder="Admin Secret Key"
+                className="form-control mb-3"
+                required
+                value={secretkey}
+                onChange={(e) => setSecretkey(e.target.value)}
+              />
+
+              <div className="d-grid mb-3">
+                <button type="submit" className="btn btn-outline-success">
+                  Register
+                </button>
               </div>
+
+              <div className="text-center">
+                <p>
+                  Already have an account?{" "}
+                  <Link to="/login" className="text-decoration-none">
+                    Login
+                  </Link>
+                </p>
+              </div>
+
             </form>
           </div>
         </div>

@@ -52,43 +52,75 @@ console.log("This is what is contained inside of products: ", stats.recent.produ
       </div>
 
       {/* Recent Products */}
-      <div className="mt-5">
-        <div className="card shadow-lg">
-          <div className="card-header bg-primary text-white">
-            <h5><i className="bi bi-box-seam me-2"></i> Recent Products</h5>
-          </div>
-          <div className="card-body">
-            {stats.recent?.products?.length === 0 ? (
-              <p className="text-muted">No recent products.</p>
-            ) : (
-              <div className="table-responsive">
-                <table className="table table-striped table-bordered align-middle">
-                  <thead className="table-primary">
-                    <tr>
-                      <th>#</th>
-                      <th>Title</th>
-                      <th>Price</th>
-                      <th>Category</th>
-                      <th>Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {stats.recent?.products?.map((product, index) => (
-                      <tr key={index}>
-                        <td>{index + 1}</td>
-                        <td>{product.title || 'N/A'}</td>
-                        <td>Ksh. {product.price || 0}</td>
-                        <td>{product.category || 'N/A'}</td>
-                        <td>{product.status || 'N/A'}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
+<div className="mt-5">
+<div className="card shadow-lg">
+  <div className="card-header bg-primary text-white">
+    <h5><i className="bi bi-box-seam me-2"></i> Recent Products</h5>
+  </div>
+
+  <div className="card-body">
+    {(!stats?.recent?.products || stats.recent.products.length === 0) ? (
+      <p className="text-muted">No recent products.</p>
+    ) : (
+      <div className="table-responsive">
+        <table className="table table-striped table-bordered align-middle">
+          <thead className="table-primary">
+            <tr>
+                <th style={{ width: "50px" }}>#</th>
+                {/* <th style={{ width: "100px" }}>Photo</th> */}
+                <th>Title</th>
+                <th>Category</th>
+                <th style={{ width: "140px" }}>Price</th>
+                <th style={{ width: "120px" }}>Status</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {stats.recent.products.slice(0, 5).map((product, index) => (
+                <tr key={product._id || index}>
+                  <td>{index + 1}</td>
+
+                  
+                  {/* <td style={{ width: 100 }}>
+                    {product.photos && product.photos.length > 0 ? (
+                      <img
+                        src={product.photos[0]}
+                        alt={product.title}
+                        className="img-fluid rounded"
+                      />
+                    ) : (
+                      <span className="text-muted">No Image</span>
+                    )}
+                  </td> */}
+
+                  <td>{product.title}</td>
+
+                  <td>{product.category || "N/A"}</td>
+
+                  <td>
+                    Ksh. {product.price ? Number(product.price).toLocaleString() : 0}
+                  </td>
+
+                  <td>
+                    <span
+                      className={`badge ${
+                        product.status === "active"
+                          ? "bg-success"
+                          : "bg-secondary"
+                      }`}
+                    >
+                      {product.status || "N/A"}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
-      </div>
+      )}
+    </div>
+  </div>
+</div>
 
       {/* Recent Premium Ads */}
       <RecentList

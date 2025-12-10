@@ -7,9 +7,9 @@ import Homecomponent from './components/Homecomponent';
 import ProductsPage from "./components/ProductsPage";
 import ProductDetails from "./components/ProductDetails";
 import Registercomponent from './components/Registercomponent';
+import AdminRegistercomponent from "./components/AdminRegistercomponent";
 import Logincomponent from './components/Logincomponent';
 import NotFound from './components/NotFound';
-import AdminRegistercomponent from './components/AdminRegistercomponent';
 import { AuthProvider } from './context/AuthContext';
 import AdminLayout from './components/admin/AdminLayout';
 import ProtectedRoute from './context/ProtectedRoute';
@@ -42,6 +42,9 @@ import BuyerMessages from './components/buyer/BuyerMessages';
 import BuyerOrders from './components/buyer/BuyerOrders';
 import BuyerProfile from './components/buyer/BuyerProfile';
 import AboutUs from './components/AboutUs';
+import BuyerChat from './components/buyer/BuyerChat';
+import BuyerProductView from "./components/buyer/forms/ProductView";
+
 
 
 function App() {
@@ -109,10 +112,17 @@ function App() {
     </ProtectedRoute>
   }
 >
-  <Route path="" element={<BuyerDashboard />} />
+<Route path="" element={<BuyerDashboard />} />
   <Route path="profile" element={<BuyerProfile />} />
   <Route path="orders" element={<BuyerOrders />} />
   <Route path="messages" element={<BuyerMessages />} />
+
+  {/* This is the chat screen */}
+  <Route path="messages/chat/:sellerId" element={<BuyerChat />} />
+
+  {/* Product View inside buyer dashboard */}
+  <Route path="product/:id" element={<BuyerProductView />} />
+
 </Route>
 
       {/* Defaults */}

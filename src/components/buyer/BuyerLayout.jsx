@@ -1,24 +1,23 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
 import SideBar from "./SideBar";
+import DashboardNavbar from '../DashboardNavbar'
 
 const BuyerLayout = () => {
   return (
-    <div className="container-fluid">
-      <div className="row">
-        
-        {/* Sidebar */}
-        <div className="col-md-3 col-lg-2 p-0">
-          <SideBar />
-        </div>
+    <div className='d-flex'>
+    <SideBar/>
 
-        {/* Main content */}
-        <div className="col-md-9 col-lg-10 p-4">
-          <Outlet />
-        </div>
+    <div className="flex-grow-1">
+      <DashboardNavbar/>
 
-      </div>
+      {/* Main area where the routed page content will be displayed */}
+      <main className="p-4 vh-100">
+          {/* Outlet renders the matched child route's elements */}
+          <Outlet/>
+      </main>
     </div>
+  </div>
   );
 };
 
