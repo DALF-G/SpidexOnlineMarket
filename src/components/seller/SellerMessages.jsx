@@ -1,91 +1,209 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
 import { AuthContext } from "../../context/AuthContext";
+import "react-toastify/dist/ReactToastify.css";
 
 const SellerMessages = () => {
-  const { token } = useContext(AuthContext);
-  const [messages, setMessages] = useState([]);
+  const { token, user } = useContext(AuthContext);
+  const [conversations, setConversations] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const API = "https://spidexmarket.onrender.com/api/message/my";
+  const navigate = useNavigate();
+
+  const API_MY_MESSAGES = "https://spidexmarket.onrender.com/api/message/my";
+  const API_MARK_SEEN = "https://spidexmarket.onrender.com/api/message/seen";
 
   const authHeader = {
     headers: { Authorization: `Bearer ${token}` },
   };
 
-  const fetchMessages = async () => {
+  // Fetch all messages for seller
+  const loadMessages = async () => {
     try {
-      toast.info("Loading messages…");
+      const res = await axios.get(API_MY_MESSAGES, authHeader);
+      const allMessages = res.data.messages || [];
 
-      const res = await axios.get(API, authHeader);
+      // Filter messages where the logged-in seller is sender or receiver
+      const myMessages = allMessages.filter(
+        (msg) =>
+          msg.sender?._id === user._id ||
+          msg.receiver?._id === user._id
+      );
 
-      setMessages(res.data.messages || []); // ⬅ matches controller response
+      // Group messages by buyer
+      const convMap = {};
 
-      toast.dismiss();
+      myMessages.forEach((msg) => {
+        const otherUser =
+          msg.sender?._id === user._id ? msg.receiver : msg.sender;
+
+        if (!otherUser) return;
+
+        const buyerId = otherUser._id;
+
+        if (!convMap[buyerId]) {
+          convMap[buyerId] = {
+            buyerId,
+            buyerName: otherUser.name || "Buyer",
+            messages: [],
+          };
+        }
+
+        convMap[buyerId].messages.push(msg);
+      });
+
+      // Format conversations
+      const convList = Object.values(convMap).map((c) => {
+        const sorted = [...c.messages].sort(
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+        );
+
+        return {
+          ...c,
+          lastMessage: sorted[0],
+          unread: sorted.filter(
+            (m) => !m.seen && m.sender?._id !== user._id
+          ).length,
+        };
+      });
+
+      setConversations(convList);
     } catch (err) {
-      toast.dismiss();
+      console.error("Failed to load messages", err);
       toast.error("Failed to load messages");
-      console.error(err);
     } finally {
       setLoading(false);
     }
   };
 
+  // Mark partner's messages as seen
+  const markSeen = async (buyerId, messages) => {
+    try {
+      const unseen = messages.filter(
+        (msg) => !msg.seen && msg.sender?._id === buyerId
+      );
+
+      await Promise.all(
+        unseen.map((msg) =>
+          axios.put(
+            API_MARK_SEEN,
+            { messageId: msg._id },
+            authHeader
+          )
+        )
+      );
+    } catch (err) {
+      console.error("Failed to mark seen", err);
+    }
+  };
+
+  // Open chat page
+  const openChat = async (buyerId, messages, buyerName) => {
+    await markSeen(buyerId, messages);
+
+    navigate(`/seller-dashboard/messages/chat/${buyerId}`, {
+      state: { receiverName: buyerName },
+    });
+  };
+
   useEffect(() => {
-    fetchMessages();
+    loadMessages();
   }, []);
 
-  if (loading) return <p className="text-center mt-4">Loading messages…</p>;
+  if (loading) {
+    return <p className="text-center mt-4">Loading messages…</p>;
+  }
 
   return (
     <div className="container mt-3">
-      <ToastContainer position="top-right" autoClose={2500} />
+      <ToastContainer position="top-right" autoClose={2000} />
 
       <nav aria-label="breadcrumb">
         <ol className="breadcrumb">
           <li className="breadcrumb-item">
             <Link to="/seller-dashboard">Dashboard</Link>
           </li>
-          <li className="breadcrumb-item active" aria-current="page">
-            Messages
-          </li>
+          <li className="breadcrumb-item active">Messages</li>
         </ol>
       </nav>
 
       <div className="card shadow p-3">
         <h5 className="text-success mb-3">
-          <i className="bi bi-chat-dots"></i> Messages
+          <i className="bi bi-chat-left-text"></i> Messages
         </h5>
 
-        {messages.length === 0 ? (
-          <div className="alert alert-info text-center">No messages found.</div>
+        {conversations.length === 0 ? (
+          <div className="alert alert-info text-center">
+            No messages found.
+          </div>
         ) : (
-          <div className="table-responsive">
-            <table className="table table-bordered table-striped align-middle">
-              <thead className="table-warning">
-                <tr>
-                  <th>#</th>
-                  <th>Sender</th>
-                  <th>Receiver</th>
-                  <th>Message</th>
-                  <th>Date</th>
-                </tr>
-              </thead>
+          <div className="list-group">
+            {conversations.map((c) => (
+              <div
+                key={c.buyerId}
+                className="list-group-item list-group-item-action"
+                style={{ cursor: "pointer" }}
+              >
+                {/* Header row */}
+                <div
+                  className="d-flex justify-content-between"
+                  onClick={() =>
+                    openChat(c.buyerId, c.messages, c.buyerName)
+                  }
+                >
+                  <h6 className="fw-bold">{c.buyerName}</h6>
 
-              <tbody>
-                {messages.map((m, i) => (
-                  <tr key={m._id}>
-                    <td>{i + 1}</td>
-                    <td>{m.sender?.name || "Unknown"}</td>
-                    <td>{m.receiver?.name || "Unknown"}</td>
-                    <td>{m.content || "-"}</td>
-                    <td>{new Date(m.createdAt).toLocaleString()}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                  {c.unread > 0 && (
+                    <span className="badge bg-danger">{c.unread}</span>
+                  )}
+                </div>
+
+                {/* Message preview */}
+                <p className="text-muted mb-1">
+                  {c.lastMessage?.content?.slice(0, 45) || "No message…"}…
+                </p>
+
+                {/* Timestamp */}
+                <small className="text-muted d-block mb-2">
+                  {new Date(c.lastMessage?.createdAt).toLocaleString()}
+                </small>
+
+                {/* Action Buttons */}
+                <div className="mt-2 d-flex gap-2">
+                  <button
+                    className="btn btn-sm btn-warning"
+                    onClick={() =>
+                      openChat(c.buyerId, c.messages, c.buyerName)
+                    }
+                  >
+                    Open Chat
+                  </button>
+
+                  <button
+                    className="btn btn-sm btn-outline-primary"
+                    onClick={() =>
+                      navigate(
+                        `/seller-dashboard/messages/chat/${c.buyerId}`,
+                        {
+                          state: { replyTo: c.lastMessage },
+                        }
+                      )
+                    }
+                  >
+                    Reply
+                  </button>
+
+                  <Link
+                    className="btn btn-sm btn-outline-secondary"
+                    to={`/seller-dashboard/messages/chat/${c.buyerId}`}
+                  >
+                    View Conversation
+                  </Link>
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </div>

@@ -44,6 +44,7 @@ import BuyerProfile from './components/buyer/BuyerProfile';
 import AboutUs from './components/AboutUs';
 import BuyerChat from './components/buyer/BuyerChat';
 import BuyerProductView from "./components/buyer/forms/ProductView";
+import SellerChat from './components/seller/SellerChat';
 
 
 
@@ -94,6 +95,9 @@ function App() {
         <Route path='products' element={<SellerProducts/>} />
         <Route path='buyers' element={<SellerBuyers/>} />
         <Route path='messages' element={<SellerMessages/>} />
+        {/* This is the chat screen */}
+        <Route path="messages/chat/:buyerId" element={<SellerChat />} />
+        
         <Route path="products/add" element={<SellerProductAdd />} />
         <Route path="products/edit" element={<SellerProductEdit />} />
         <Route path="products/view" element={<SellerProductView />} />
