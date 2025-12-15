@@ -1,47 +1,133 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
 import { AuthContext } from "../../context/AuthContext";
+import "react-toastify/dist/ReactToastify.css";
+
+const API = "https://spidexmarket.onrender.com/api/admin/message";
 
 const Messages = () => {
   const { token } = useContext(AuthContext);
+  const navigate = useNavigate();
+
   const [messages, setMessages] = useState([]);
+  const [conversations, setConversations] = useState([]);
+  const [filtered, setFiltered] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [sellerFilter, setSellerFilter] = useState("");
 
-  const API = "https://spidexmarket.onrender.com/api/admin/message";
+  const headers = { headers: { Authorization: `Bearer ${token}` } };
 
-  const authHeader = {
-    headers: { Authorization: `Bearer ${token}` },
-  };
-
+  // Fetch all messages for admin
   const fetchMessages = async () => {
     try {
       toast.info("Loading messages…");
-      const res = await axios.get(API, authHeader);
-      setMessages(res.data.msgs || []);
+      const res = await axios.get(API, headers);
+      const msgs = res.data?.msgs || [];
+      setMessages(msgs);
       toast.dismiss();
-    } 
-    catch (err) {
+    } catch (err) {
       toast.dismiss();
       toast.error("Failed to load messages");
       console.error(err);
-    } 
-    finally {
+    } finally {
       setLoading(false);
     }
+  };
+
+  // Group messages into conversations
+  const buildConversations = (msgs) => {
+    const map = {};
+
+    msgs.forEach((msg) => {
+      const sender = msg.sender?._id;
+      const receiver = msg.receiver?._id;
+
+      // Use combined id to identify unique conversation
+      const convoKey =
+        sender < receiver ? `${sender}-${receiver}` : `${receiver}-${sender}`;
+
+      if (!map[convoKey]) {
+        map[convoKey] = {
+          id: convoKey,
+          participants: [msg.sender, msg.receiver],
+          messages: [],
+        };
+      }
+
+      map[convoKey].messages.push(msg);
+    });
+
+    // format list
+    const convList = Object.values(map).map((c) => {
+      const sorted = [...c.messages].sort(
+        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+      );
+
+      const last = sorted[0];
+
+      return {
+        ...c,
+        lastMessage: last,
+        unread: sorted.filter((m) => !m.seen).length,
+        seller:
+          c.participants.find((p) => p?.role === "seller") ||
+          c.participants.find((p) => p?.role !== "admin"),
+      };
+    });
+
+    // Sort by latest last message
+    convList.sort(
+      (a, b) =>
+        new Date(b.lastMessage?.createdAt) -
+        new Date(a.lastMessage?.createdAt)
+    );
+
+    setConversations(convList);
+    setFiltered(convList);
+  };
+
+  // Apply seller filter
+  const applyFilter = () => {
+    if (!sellerFilter.trim()) {
+      setFiltered(conversations);
+      return;
+    }
+
+    const search = sellerFilter.toLowerCase();
+
+    const filteredList = conversations.filter(
+      (c) =>
+        c.seller?.name?.toLowerCase().includes(search) ||
+        c.participants.some((p) =>
+          p?.name?.toLowerCase().includes(search)
+        )
+    );
+
+    setFiltered(filteredList);
   };
 
   useEffect(() => {
     fetchMessages();
   }, []);
 
-  if (loading) return <p className="text-center mt-4">Loading messages…</p>;
+  useEffect(() => {
+    if (messages.length > 0) buildConversations(messages);
+  }, [messages]);
+
+  useEffect(() => {
+    applyFilter();
+  }, [sellerFilter, conversations]);
+
+  if (loading)
+    return <p className="text-center mt-4">Loading messages…</p>;
 
   return (
     <div className="container mt-3">
       <ToastContainer position="top-right" autoClose={2500} />
 
+      {/* Breadcrumb */}
       <nav aria-label="breadcrumb">
         <ol className="breadcrumb">
           <li className="breadcrumb-item">
@@ -54,37 +140,70 @@ const Messages = () => {
       </nav>
 
       <div className="card shadow p-3">
-        <h5 className="text-success mb-3">
-          <i className="bi bi-chat-dots"></i> Messages
-        </h5>
+        <div className="d-flex justify-content-between align-items-center mb-3">
+          <h5 className="text-success mb-0">
+            <i className="bi bi-chat-dots"></i> Conversations
+          </h5>
 
-        {messages.length === 0 ? (
-          <div className="alert alert-info text-center">No messages found.</div>
+          {/* Search sellers */}
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Filter by seller or user name..."
+            style={{ maxWidth: "300px" }}
+            value={sellerFilter}
+            onChange={(e) => setSellerFilter(e.target.value)}
+          />
+        </div>
+
+        {filtered.length === 0 ? (
+          <div className="alert alert-info text-center">
+            No conversations found.
+          </div>
         ) : (
-          <div className="table-responsive">
-            <table className="table table-bordered table-striped align-middle">
-              <thead className="table-warning">
-                <tr>
-                  <th>#</th>
-                  <th>Sender</th>
-                  <th>Receiver</th>
-                  <th>Message</th>
-                  <th>Date</th>
-                </tr>
-              </thead>
+          <div className="list-group">
+            {filtered.map((c, index) => {
+              const last = c.lastMessage;
+              const seller = c.seller;
 
-              <tbody>
-                {messages.map((m, i) => (
-                  <tr key={m._id}>
-                    <td>{i + 1}</td>
-                    <td>{m.sender?.name || "Unknown"}</td>
-                    <td>{m.receiver?.name || "Unknown"}</td>
-                    <td>{m.content || "-"}</td>
-                    <td>{new Date(m.createdAt).toLocaleString()}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+              return (
+                <div
+                  key={c.id}
+                  className="list-group-item list-group-item-action p-3"
+                  style={{ cursor: "pointer" }}
+                  onClick={() =>
+                    navigate(
+                      `/admin-dashboard/messages/chat/${seller?._id}`,
+                      {
+                        state: { participants: c.participants },
+                      }
+                    )
+                  }
+                >
+                  <div className="d-flex justify-content-between">
+                    <div>
+                      <h6 className="fw-bold mb-1">
+                        {seller?.name || "Unknown User"}
+                      </h6>
+                      <p className="text-muted mb-1" style={{ fontSize: 14 }}>
+                        {last?.content?.slice(0, 60) || "No messages…"}
+                      </p>
+                    </div>
+
+                    <div className="text-end">
+                      <small className="text-muted">
+                        {new Date(last?.createdAt).toLocaleString()}
+                      </small>
+                      {c.unread > 0 && (
+                        <div className="badge bg-danger mt-1">
+                          {c.unread}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         )}
       </div>

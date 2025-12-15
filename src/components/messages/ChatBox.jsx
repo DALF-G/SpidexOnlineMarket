@@ -18,10 +18,14 @@ const ChatBox = () => {
   // 1. route param (buyer or seller)
   // 2. location.state
   const receiverId =
-    location.state?.receiverId ||
-    params.sellerId ||
-    params.buyerId ||
-    null;
+  location.state?.receiverId ||
+  params.partnerId ||
+  null;
+
+  console.log("DEBUG → receiverId:", receiverId);
+  console.log("DEBUG → params:", params);
+  console.log("DEBUG → location.state:", location.state);
+  
 
     const [receiverName, setReceiverName] = useState(
         location.state?.receiverName || ""

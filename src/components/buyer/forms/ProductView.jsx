@@ -39,33 +39,46 @@ const ProductView = () => {
   const fetchProduct = async () => {
     try {
       setLoading(true);
-
-      const res = await axios.get(`${API}/${id}`);
+  
+      const token = localStorage.getItem("token");
+  
+      const res = await axios.get(`${API}/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
       const p = res.data.product;
-
+  
       if (!p) {
         toast.error("Product not found");
         setLoading(false);
         return;
       }
-
+  
+      if (!p.seller || !p.seller._id) {
+        toast.error("This product has no seller assigned.");
+        setLoading(false);
+        return;
+      }
+  
       if (!ignore) {
         setProduct(p);
         setActiveImage(p.photos?.[0] || "");
         await fetchRelatedProducts(p.category);
       }
-
+  
       setLoading(false);
     } catch (err) {
       toast.error("Failed to load product");
       setLoading(false);
     }
   };
+  
 
   useEffect(() => {
     ignore = false;
     fetchProduct();
-
     return () => {
       ignore = true;
     };
@@ -99,7 +112,7 @@ const ProductView = () => {
             <Link to="/buyer-dashboard">Home</Link>
           </li>
           <li className="breadcrumb-item">
-            <Link to="/products">Products</Link>
+            <Link to="/buyer-dashboard">Products</Link>
           </li>
           <li className="breadcrumb-item active">{product.title}</li>
         </ol>
@@ -176,14 +189,13 @@ const ProductView = () => {
               Call Seller
             </a>
 
-            {/* ✅ FIXED MESSAGE SELLER BUTTON */}
             <button
               className="btn btn-warning w-50"
               onClick={() =>
                 navigate(`/buyer-dashboard/messages/chat/${product?.seller?._id}`, {
                   state: {
                     receiverId: product?.seller?._id,
-                    receiverName: product?.seller?.name,
+                    receiverName: product?.seller?.name || "Seller",
                     productId: product?._id,
                   },
                 })
@@ -206,7 +218,7 @@ const ProductView = () => {
             {related.map((p) => (
               <div key={p._id} className="col-md-3 col-sm-6">
                 <div className="card h-100 shadow-sm">
-                  <Link to={`/buyer/product/${p._id}`}>
+                  <Link to={`/buyer-dashboard/product/${p._id}`}>
                     <img
                       src={p.photos?.[0] || "https://via.placeholder.com/300"}
                       className="card-img-top"
@@ -228,7 +240,7 @@ const ProductView = () => {
 
                   <div className="card-footer bg-white text-center">
                     <Link
-                      to={`/buyer/product/${p._id}`}
+                      to={`/buyer-dashboard/product/${p._id}`}
                       className="btn btn-warning btn-sm w-100"
                     >
                       View
